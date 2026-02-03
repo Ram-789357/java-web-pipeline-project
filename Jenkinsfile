@@ -3,6 +3,7 @@ pipeline {
 
     tools {
         jdk 'JDK17'
+        maven 'Maven3'   // Make sure Maven is configured in Jenkins
     }
 
     stages {
@@ -12,25 +13,17 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Build & Package') {
             steps {
-                echo "Simple Java project – build skipped"
-            }
-        }
-
-        stage('Create JAR') {
-            steps {
-                bat '''
-                mkdir artifact
-                echo Hello Jenkins > artifact/app.txt
-                '''
+                echo "Building Java project using Maven..."
+                sh 'mvn clean package' // On Windows, use bat 'mvn clean package'
             }
         }
     }
 
     post {
         success {
-            archiveArtifacts artifacts: 'artifact/**'
+            archiveArtifacts artifacts: 'target/*.jar'  // Archives the JAR created by Maven
         }
     }
 }
