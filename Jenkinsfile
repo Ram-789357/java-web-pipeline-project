@@ -3,27 +3,41 @@ pipeline {
 
     tools {
         jdk 'JDK17'
-        maven 'Maven3'   // Make sure Maven is configured in Jenkins
+        maven 'MAVEN3'
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Clone from GitHub') {
             steps {
-                checkout scm
+                git branch: 'main',
+                    url: 'https://github.com/Ram-789357/java-web-pipeline-project.git'
             }
         }
 
-        stage('Build & Package') {
+        stage('Build Project') {
             steps {
-                echo "Building Java project using Maven..."
-                sh 'mvn clean package' // On Windows, use bat 'mvn clean package'
+                bat 'mvn clean compile'
+            }
+        }
+
+        stage('Run Selenium Tests') {
+            steps {
+                bat 'mvn test'
+            }
+        }
+
+        stage('Create JAR Artifact') {
+            steps {
+                bat 'mvn package'
             }
         }
     }
 
     post {
         success {
-            archiveArtifacts artifacts: 'target/*.jar'  // Archives the JAR created by Maven
+            archiveArtifacts artifacts: 'target/*.jar'
+            echo 'Pipeline completed successfully'
         }
     }
 }
