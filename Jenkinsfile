@@ -10,12 +10,7 @@ pipeline {
 
         stage('Checkout SCM') {
             steps {
-<<<<<<< HEAD
                 checkout scm
-=======
-                git branch: 'main',
-                    url: 'https://github.com/Ram-789357/java-web-pipeline-project.git'
->>>>>>> b831cde68635040e464e9154f72eba8dff1f375d
             }
         }
 
