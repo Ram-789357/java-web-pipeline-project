@@ -3,21 +3,20 @@ pipeline {
 
     tools {
         jdk 'JDK17'
-        maven 'MAVEN3'
+        maven 'Maven3'
     }
 
     stages {
 
-        stage('Clone from GitHub') {
+        stage('Checkout SCM') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/YOUR_USERNAME/java-web-pipeline-project.git'
+                checkout scm
             }
         }
 
         stage('Build Project') {
             steps {
-                bat 'mvn clean compile'
+                bat 'mvn clean package'
             }
         }
 
@@ -27,17 +26,25 @@ pipeline {
             }
         }
 
-        stage('Create JAR Artifact') {
+        stage('Build Docker Image') {
             steps {
-                bat 'mvn package'
+                bat 'docker build -t java-web-pipeline:1.0 .'
+            }
+        }
+
+        stage('Run Docker Container') {
+            steps {
+                bat '''
+                docker rm -f java-web-container || exit 0
+                docker run -d -p 8085:8080 --name java-web-container java-web-pipeline:1.0
+                '''
             }
         }
     }
 
     post {
         success {
-            archiveArtifacts artifacts: 'target/*.jar'
-            echo 'Pipeline completed successfully'
+            echo 'Docker container running successfully!'
         }
     }
 }
