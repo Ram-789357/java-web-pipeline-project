@@ -8,13 +8,13 @@ pipeline {
 
     stages {
 
-        stage('Checkout SCM') {
+        stage('Checkout Code') {
             steps {
                 checkout scm
             }
         }
 
-        stage('Build Project') {
+        stage('Build with Maven') {
             steps {
                 bat 'mvn clean package'
             }
@@ -28,23 +28,26 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t java-web-pipeline:1.0 .'
+                bat 'docker build -t education-app .'
+            }
+        }
+
+        stage('Remove Old Container') {
+            steps {
+                bat 'docker rm -f education-container || exit 0'
             }
         }
 
         stage('Run Docker Container') {
             steps {
-                bat '''
-                docker rm -f java-web-container || exit 0
-                docker run -d -p 8085:8080 --name java-web-container java-web-pipeline:1.0
-                '''
+                bat 'docker run -d -p 8088:80 --name education-container education-app'
             }
         }
     }
 
     post {
         success {
-            echo 'Docker container running successfully!'
+            echo 'Application Successfully Deployed!'
         }
     }
 }
