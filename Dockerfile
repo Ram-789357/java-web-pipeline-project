@@ -1,5 +1,8 @@
-FROM eclipse-temurin:17-jdk
-WORKDIR /app
-COPY target/*.jar app.jar
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+FROM nginx:alpine
+
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy compiled static files from Maven target
+COPY target/classes/static/ /usr/share/nginx/html/
+
+EXPOSE 80
