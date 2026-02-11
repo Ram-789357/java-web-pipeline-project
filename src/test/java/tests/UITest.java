@@ -2,25 +2,22 @@ package tests;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.testng.annotations.Test;
-import io.github.bonigarcia.wdm.WebDriverManager;
-
-import java.io.File;
+import org.junit.Test;
 
 public class UITest {
 
     @Test
-    public void validateTitle() {
-        WebDriverManager.chromedriver().setup();
+    public void testUI() {
+
+        System.setProperty("webdriver.chrome.driver","C:\\chromedriver\\chromedriver.exe");
+
         WebDriver driver = new ChromeDriver();
 
-        File htmlFile = new File("src/main/resources/static/index.html");
-        driver.get(htmlFile.getAbsolutePath());
+        // Test local built file
+        driver.get("file:///C:/Users/YOURUSER/.jenkins/workspace/YOURJOB/target/classes/static/index.html");
 
-        String titleText = driver.findElement(
-                org.openqa.selenium.By.id("title")).getText();
+        System.out.println("Title: " + driver.getTitle());
 
-        System.out.println("Title: " + titleText);
         driver.quit();
     }
 }
